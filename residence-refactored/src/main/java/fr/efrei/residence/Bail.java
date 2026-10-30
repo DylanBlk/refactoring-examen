@@ -3,6 +3,8 @@ package fr.efrei.residence;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.EnumSet;
 
 public class Bail {
 
@@ -19,11 +21,7 @@ public class Bail {
     private double caution;
     private double fraisDossier;
 
-    public boolean parking;
-    public boolean menage;
-    public boolean laverie;
-    public boolean fibre;
-    public boolean assurance;
+    private final Set<Option> options = EnumSet.noneOf(Option.class);
 
     public List<Paiement> paiements = new ArrayList<Paiement>();
     public double soldeDu = 0;
@@ -58,15 +56,20 @@ public class Bail {
     public double getFraisDossier() { return fraisDossier; }
     public void setFraisDossier(double f) { this.fraisDossier = f; }
 
+    public void setOptions(Set<Option> options) {
+        this.options.clear();
+        this.options.addAll(options);
+    }
+
     public String listerOptions() {
-        String s = "";
-        if (menage) s = s + "ménage, ";
-        if (parking) s = s + "parking, ";
-        if (laverie) s = s + "laverie, ";
-        if (fibre) s = s + "fibre, ";
-        if (assurance) s = s + "assurance, ";
-        if (s.length() == 0) return "aucune";
-        return s.substring(0, s.length() - 2);
+        List<String> libelles = new ArrayList<>();
+        for (Option option : Option.values()) {
+            if (options.contains(option)) {
+                libelles.add(option.getLibelle());
+            }
+        }
+        if (libelles.isEmpty()) return "aucune";
+        return String.join(", ", libelles);
     }
 
     /**

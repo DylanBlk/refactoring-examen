@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Set;
+import java.util.EnumSet;
 
 /**
  * Branche le code historique sur les tests de contrat.
@@ -83,10 +84,8 @@ public class NouveauSystemeAdapter implements SystemeResidence {
         if (l == null) {
             return OptionalDouble.empty();
         }
-        Set<Option> o = d.options();
-        return OptionalDouble.of(new CalculateurLoyer().calculerLoyer(l, fr.efrei.residence.Profil.valueOf(d.profil().name()), d.echelonBourse(),
-                o.contains(Option.PARKING), o.contains(Option.MENAGE), o.contains(Option.LAVERIE),
-                o.contains(Option.FIBRE), o.contains(Option.ASSURANCE)));
+        return OptionalDouble.of(new CalculateurLoyer().calculerLoyer(l,
+                fr.efrei.residence.Profil.valueOf(d.profil().name()), d.echelonBourse(), convertirOptions(d.options())));
     }
 
     @Override
@@ -95,9 +94,8 @@ public class NouveauSystemeAdapter implements SystemeResidence {
         if (e == null) {
             return Optional.empty();
         }
-        Set<Option> o = d.options();
-        Bail b = gestion.attribuerLogement(e, fr.efrei.residence.TypeLogement.valueOf(d.type().name()), o.contains(Option.PARKING), o.contains(Option.MENAGE),
-                o.contains(Option.LAVERIE), o.contains(Option.FIBRE), o.contains(Option.ASSURANCE), d.dateSignature());
+        Bail b = gestion.attribuerLogement(e, fr.efrei.residence.TypeLogement.valueOf(d.type().name()),
+                convertirOptions(d.options()), d.dateSignature());
         return Optional.ofNullable(b).map(Bail::getId);
     }
 
@@ -165,6 +163,14 @@ public class NouveauSystemeAdapter implements SystemeResidence {
             notifications.add(new Notification(Canal.COURRIER, courrier[0], courrier[1]));
         }
         return notifications;
+    }
+
+    private Set<fr.efrei.residence.Option> convertirOptions(Set<Option> options) {
+        Set<fr.efrei.residence.Option> resultat = EnumSet.noneOf(fr.efrei.residence.Option.class);
+        for (Option option : options) {
+            resultat.add(fr.efrei.residence.Option.valueOf(option.name()));
+        }
+        return resultat;
     }
 
     private static Etudiant etudiant(String ref) {
