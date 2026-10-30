@@ -3,7 +3,11 @@ package fr.efrei.residence;
 import java.util.Set;
 
 public class CalculateurLoyer {
-    private final AssemblageLoyer assemblage = new AssemblageLoyer();
+    private final AssemblageLoyer assemblage;
+
+    public CalculateurLoyer(AssemblageLoyer assemblage) {
+        this.assemblage = assemblage;
+    }
 
     /**
      * Loyer mensuel hors charges, options comprises, remise déduite.

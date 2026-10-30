@@ -61,51 +61,7 @@ public class Bail {
         this.options.addAll(options);
     }
 
-    public String listerOptions() {
-        List<String> libelles = new ArrayList<>();
-        for (Option option : Option.values()) {
-            if (options.contains(option)) {
-                libelles.add(option.getLibelle());
-            }
-        }
-        if (libelles.isEmpty()) return "aucune";
-        return String.join(", ", libelles);
-    }
-
-    /**
-     * Quittance de loyer pour un mois payé (format AAAA-MM).
-     */
-    public String genererQuittance(String mois) {
-        Paiement p = null;
-        for (Paiement x : paiements) {
-            if (x.mois.equals(mois)) p = x;
-        }
-        if (p == null) {
-            return "Aucun paiement pour " + mois;
-        }
-        String q = "";
-        q += "==========================================\n";
-        q += "   RÉSIDENCE CAMPUS VERT - QUITTANCE\n";
-        q += "==========================================\n";
-        q += "Bail      : " + id + "\n";
-        q += "Locataire : " + etudiant.getNomComplet() + " (" + etudiant.getProfil() + ")\n";
-        q += "Logement  : " + logement.getNumero() + " - " + logement.getType() + " " + logement.getSurface() + " m²";
-        if (logement.isMeuble()) q += " meublé";
-        q += "\n";
-        q += "Période   : " + mois + "\n";
-        q += "Options   : " + listerOptions() + "\n";
-        q += "------------------------------------------\n";
-        q += "Loyer HC  : " + Utils.euros(loyerHorsCharges) + "\n";
-        q += "Charges   : " + Utils.euros(charges) + "\n";
-        if (p.penalite > 0) {
-            q += "Pénalité  : " + Utils.euros(p.penalite) + "\n";
-        }
-        q += "Total dû  : " + Utils.euros(p.du) + "\n";
-        q += "Payé le   : " + Utils.date(p.date) + " : " + Utils.euros(p.montant) + "\n";
-        if (p.montant < p.du) {
-            q += "RESTE DÛ  : " + Utils.euros(Utils.arrondir(p.du - p.montant)) + "\n";
-        }
-        q += "==========================================";
-        return q;
+    public Set<Option> getOptions() {
+        return Set.copyOf(options);
     }
 }

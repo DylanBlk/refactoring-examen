@@ -5,8 +5,8 @@ import java.util.List;
 
 public class SmsService implements CanalNotification {
 
-    public static int compteurSms = 0;
-    public static List<String[]> journal = new ArrayList<String[]>();
+    private int compteurSms = 0;
+    private final List<String[]> journal = new ArrayList<String[]>();
 
     public void envoyerSms(String numero, String message) {
         if (numero == null || numero.length() < 10) {
@@ -30,4 +30,14 @@ public class SmsService implements CanalNotification {
     public void relancer(Etudiant e, Bail b) {
         envoyerSms(e.getTelephone(), "Campus Vert : " + Utils.euros(b.soldeDu) + " impayés sur " + b.getId());
     }
+    @Override
+    public List<String[]> historique() {
+        return List.copyOf(journal);
+    }
+
+    @Override
+    public int nombreEnvois() {
+        return compteurSms;
+    }
+
 }

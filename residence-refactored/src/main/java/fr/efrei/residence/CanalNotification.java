@@ -10,4 +10,14 @@ public interface CanalNotification {
 
     /** Envoie une relance d'impayé, avec le texte propre à ce canal. */
     void relancer(Etudiant e, Bail b);
+    java.util.List<String[]> historique();
+
+    default int nombreEnvois() {
+        return historique().size();
+    }
+
+    default double coutAffranchissement() {
+        return 0;
+    }
+
 }

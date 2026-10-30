@@ -19,7 +19,7 @@ class AssemblageLoyerTest {
     @Test
     void appliqueLaRemiseSurToutesLesCouchesPuisArrondit() {
         Logement logement = LogementFactory.creer(TypeLogement.T1, "TEST", 30, 0, true, 0);
-        double montant = new CalculateurLoyer().calculerLoyer(logement, Profil.ALTERNANT, 0,
+        double montant = new CalculateurLoyer(new AssemblageLoyer()).calculerLoyer(logement, Profil.ALTERNANT, 0,
                 EnumSet.allOf(Option.class));
         assertEquals(544.64, montant, PRECISION);
     }
@@ -44,8 +44,8 @@ class AssemblageLoyerTest {
         Set<Option> options = EnumSet.of(Option.ASSURANCE, Option.PARKING, Option.MENAGE);
         bail.setOptions(options);
         options.clear();
-        assertEquals("m\u00e9nage, parking, assurance", bail.listerOptions());
+        assertEquals("m\u00e9nage, parking, assurance", new GenerateurQuittance().listerOptions(bail));
         bail.setOptions(EnumSet.noneOf(Option.class));
-        assertEquals("aucune", bail.listerOptions());
+        assertEquals("aucune", new GenerateurQuittance().listerOptions(bail));
     }
 }

@@ -6,8 +6,21 @@ import java.util.EnumSet;
 public class Main {
 
     public static void main(String[] args) {
-        Residence.initialiser();
-        GestionResidence gestion = new GestionResidence();
+        Database database = new Database();
+        Residence residence = new Residence();
+        residence.initialiser();
+        EmailService email = new EmailService();
+        SmsService sms = new SmsService();
+        CourrierService courrier = new CourrierService();
+        NotificationFactory canaux = new NotificationFactory(email, sms, courrier);
+        NotificationService notifications = new NotificationService(canaux, database);
+        CalculateurLoyer calculateur = new CalculateurLoyer(new AssemblageLoyer());
+        GenerateurQuittance quittances = new GenerateurQuittance();
+        InscriptionService inscriptions = new InscriptionService(database);
+        AttributionService attributions = new AttributionService(database, residence, calculateur, notifications);
+        CycleBailService cycle = new CycleBailService(database, notifications);
+        RapportService rapports = new RapportService(residence, database, sms, courrier);
+        GestionResidence gestion = new GestionResidence(inscriptions, attributions, cycle, notifications, rapports, residence);
 
         gestion.ajouterLogement(TypeLogement.STUDIO, "C002", 16, 0, false, 0);
 
@@ -64,8 +77,8 @@ public class Main {
         gestion.payerLoyer(bC.getId(), "2026-10", LocalDate.of(2026, 10, 1), 1000);
 
         System.out.println();
-        System.out.println(bD.genererQuittance("2026-09"));
-        System.out.println(bA.genererQuittance("2026-10"));
+        System.out.println(quittances.generer(bD, "2026-09"));
+        System.out.println(quittances.generer(bA, "2026-10"));
 
         System.out.println();
         gestion.relancerImpayes();

@@ -9,9 +9,9 @@ public class EmailService implements CanalNotification {
     public static final String EXPEDITEUR = "gestion@campusvert.fr";
 
     // garde une trace des emails envoyés (demandé par l'administration)
-    public static List<String[]> journal = new ArrayList<String[]>();
+    private final List<String[]> journal = new ArrayList<String[]>();
 
-    public static boolean envoyer(String destinataire, String sujet, String corps) {
+    public boolean envoyer(String destinataire, String sujet, String corps) {
         try {
             if (!Utils.emailValide(destinataire)) {
                 throw new Exception("Adresse invalide");
@@ -35,4 +35,9 @@ public class EmailService implements CanalNotification {
         envoyer(e.getEmail(), "RELANCE - loyer impayé",
                 "Bonjour " + e.getPrenom() + ", il reste " + Utils.euros(b.soldeDu) + " à régler sur le bail " + b.getId() + ".");
     }
+    @Override
+    public List<String[]> historique() {
+        return List.copyOf(journal);
+    }
+
 }
